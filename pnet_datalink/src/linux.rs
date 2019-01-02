@@ -298,6 +298,10 @@ impl DataLinkReceiver for DataLinkReceiverImpl {
             }
         }
     }
+
+    fn next_with_buf<'b>(&self, _buf: &mut Vec<u8>) -> io::Result<usize> {
+        unimplemented!();
+    }
 }
 
 /// Get a list of available network interfaces for the current machine.

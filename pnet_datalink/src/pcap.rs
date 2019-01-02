@@ -8,6 +8,7 @@ use std::iter::repeat;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use std::path::Path;
+use std::ptr;
 
 use self::pcap::{Active, Activated};
 
@@ -169,6 +170,21 @@ impl <T: Activated + Send + Sync> DataLinkReceiver for DataLinkReceiverImpl<T> {
             Err(e) => return Err(io::Error::new(io::ErrorKind::Other, e)),
         };
         Ok(&self.read_buffer)
+    }
+
+    fn next_with_buf(&self, buf: &mut Vec<u8>) -> io::Result<usize> {
+        let mut cap = self.capture.lock().unwrap();
+        match cap.next() {
+            Ok(pkt) => {
+                let len = pkt.data.len();
+                if buf.len() < len {
+                    buf.resize(len, 0);
+                }
+                unsafe { ptr::copy_nonoverlapping(pkt.data.as_ptr(), buf.as_mut_ptr(), len) };
+                Ok(len)
+            },
+            Err(e) => Err(io::Error::new(io::ErrorKind::Other, e)),
+        }
     }
 }
 

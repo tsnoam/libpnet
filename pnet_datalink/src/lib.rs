@@ -189,6 +189,8 @@ pub trait DataLinkReceiver: Send {
     #[inline]
     /// Get the next Ethernet frame in the channel
     fn next(&mut self) -> io::Result<&[u8]>;
+
+    fn next_with_buf(&self, buf: &mut Vec<u8>) -> io::Result<usize>;
 }
 
 

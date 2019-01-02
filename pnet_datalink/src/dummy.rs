@@ -155,6 +155,11 @@ impl DataLinkReceiver for MockDataLinkReceiver {
             }
         }
     }
+
+
+    fn next_with_buf<'b>(&self, _buf: &mut Vec<u8>) -> io::Result<usize> {
+        unimplemented!();
+    }
 }
 
 /// Get three fake interfaces generated with `dummy_interface(0..3)`.
